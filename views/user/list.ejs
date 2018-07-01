@@ -2,126 +2,60 @@
 including header content which is common for all pages
 -->
 <%- include ../layouts/header.ejs %>
-
 <% if (messages.error) { %>
-	<p style="color:red"><%- messages.error %></p>
+<p style="color:red;padding-left: 35%""><%- messages.error %></p>
 <% } %>
-
 <% if (messages.success) { %>
-	<p style="color:green"><%- messages.success %></p>
+<p style="color:green;padding-left: 35%""><%- messages.success %></p>
 <% } %>
 
-<style>
-	.a-inside.edit{background-color:#ff9900;color:#fff;font-size:13px; }
-	.data-table{padding-left:5%;
-		padding-right:5%;}
-	.data-table table{
-		border-collapse:collapse;
-		border:0px solid #ddd;
-		width:100%;
-	}
-
-
-	.data-table th {
-		padding-top: 15px;
-		padding-bottom: 15px;
-		text-align: left;
-		background-color: #FFFFFF;
-		color: #ffa500;
-
-	}
-
-	.data-table td {
-		padding-top: 25px;
-		border: 0px;
-		vertical-align: top;
-
-
-		/* padding-bottom: 25px;*/
-
-	}
-	.data-table tr {
-		border: 0.5px ridge;
-		border-left: 0px solid;
-		border-right: 0px solid;
-		border-top: 0px solid;
-		border-bottom: 1px solid #a59d9d;
-	}
-
-	.data-table1 tr {
-		border: 0.5px ridge;
-		border-left: 0px solid;
-		border-right: 0px solid;
-		border-top: 0px solid;
-		border-bottom: 1px solid #a59d9d;
-	}
-
-
-
-	.data-table tr:hover {
-		background: #eeeeee !important;
-	}
-
-	.data-table tr:nth-child(odd) { background-color: #f9f9f9; }
-	.data-table tr:nth-child(even) { background-color: #FFFFFF; }
-
-	.data-table-mini table{
-		border-collapse:collapse;
-		border:0px solid #ddd;
-		width:100%;
-		table-layout: fixed;}
-
-	.data-table-mini tr {
-		border: 0.5px ridge;
-		border-left: 0px solid;
-		border-right: 0px solid;
-		border-top: 0px solid;
-		border-bottom: 1px solid #a59d9d;
-	}
-</style>
 
 <div class="data-table">
-	<table cellspacing="0" cellpadding="0">
+    <table cellspacing="0" cellpadding="0">
+        <div style="padding-left:5%;padding-bottom: 3%;padding-top: 2%;width: 100%;">
+            <form method="post" action="/users/search">
+                <input type="text" placeholder="Search by Name.." name="name_search" style="width: 71%; border-radius: 25px;">
+                <button type="submit" class="a-inside edit" style=" border-radius: 25px;">Search</button>
+            </form>
 
-	<form method="post" action="/users/search">
-		<input type="text" placeholder="Search by Name.." name="name_search" style="width: 71%; border-radius: 25px;">
-		<button type="submit" class="a-inside edit" style=" border-radius: 25px;">Search</button>
-	</form>
+        </div>
 
-	<tr style='text-align:left; background-color:#CCC'>
-		<th>Id</th>
-		<th>Name</th>
-		<th>Device</th>
-		<th>Action</th>
-	</tr>
-	
-	<!--
-		Using FOREACH LOOP for the users array
-		
-		myArray.forEach(function(el, index) {
-			// el - current element, i - index
-		});
-	-->
-	<% if (data) { %>
-	<% data.forEach(function(user){ %>
-		<tr>
-			<td><%= user._id %></td>
-			<td><%= user.name %></td>
-			<td><%= user.device %></td>
-			<td>
-				<div style="float:left">
-					<a href='/users/edit/<%= user.name %>'>Edit</a> &nbsp;
-					<form method="post" action="/users/delete/<%= user._id %>" style="float:right">
-						<input type="submit" name="delete" value='Delete' onClick="return confirm('Are you sure you want to delete?')" />
-						<input type="hidden" name="_method" value="DELETE" />
-					</form>
-				</div>
-			</td>
-		</tr>
-	<% }) %>
-	<% } %>
 
-</table>
+
+        <tr style='text-align:left; background-color:#CCC'>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Device</th>
+            <th>Action</th>
+        </tr>
+
+        <!--
+            Using FOREACH LOOP for the users array
+
+            myArray.forEach(function(el, index) {
+                // el - current element, i - index
+            });
+        -->
+        <% if (data) { %>
+        <% data.forEach(function(user){ %>
+        <tr>
+            <td><%= user._id %></td>
+            <td><%= user.name %></td>
+            <td><%= user.device %></td>
+            <td>
+                <div style="float:left">
+                    <form method="post" action="/users/delete/<%= user._id %>" style="float:right">
+                        <input type="submit" name="delete" value='Delete'
+                               onClick="return confirm('Are you sure you want to delete?')"/>
+                        <input type="hidden" name="_method" value="DELETE"/>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        <% }) %>
+        <% } %>
+
+    </table>
 </div>
 
 <!--

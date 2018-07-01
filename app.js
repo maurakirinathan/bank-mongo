@@ -1,6 +1,10 @@
 var express = require('express')
 var app = express()
 
+var http = require('http');
+var path = require('path');
+app.use(express.static(path.join(__dirname, 'public')));
+
 var expressMongoDb = require('express-mongo-db');
 
 var config = require('./config')
@@ -48,6 +52,20 @@ app.use(session({
 app.use(flash())
 
 
+var auth = function(req, res, next) {
+    if (req.session && req.session.user === "admin" && req.session.admin) {
+        //
+        console.log("there : 200");
+        return next();
+    } else {
+        console.log("there is a prob : 401");
+        // return  res.status(401).send();
+        return res.redirect("/");
+
+    }
+
+};
+
 // Login endpoint
 app.get('/login', function (req, res) {
     if (!req.query.username || !req.query.password) {
@@ -58,15 +76,22 @@ app.get('/login', function (req, res) {
         req.session.admin = true;
         res.redirect("/users");
 
-
     }
+});
+
+// Logout endpoint
+app.get('/logout', function (req, res) {
+    req.session.destroy();
+    res.redirect("/");
 });
 
 
 
-app.use('/', index)
-app.use('/users', users)
 
-app.listen(3000, function(){
-	console.log('Server running at port 3000: http://127.0.0.1:3000')
+
+app.use('/',index)
+app.use('/users',auth, users)
+
+app.listen(3001, function(){
+	console.log('Server running at port 3000: http://127.0.0.1:3001')
 })

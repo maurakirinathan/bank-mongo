@@ -3,7 +3,7 @@ var app = express()
 var ObjectId = require('mongodb').ObjectId
 
 // SHOW LIST OF USERS
-app.get('/', function(req, res, next) {	
+app.get('/', function(req, res, next) {
 	// fetch and sort users collection by id in descending order
 	req.db.collection('keys').find().sort({"_id": -1}).toArray(function(err, result) {
 		//if (err) return console.log(err)
@@ -79,5 +79,8 @@ app.delete('/delete/(:id)', function(req, res, next) {
 		}
 	})	
 })
+
+
+
 
 module.exports = app

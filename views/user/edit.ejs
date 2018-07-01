@@ -4,14 +4,15 @@ including header content which is common for all pages
 <%- include ../layouts/header.ejs %>	
 		
 <% if (messages.error) { %>
-	<p style="color:red"><%- messages.error %></p>
+	<p style="color:red;padding-left: 35%"><%- messages.error %></p>
 <% } %>
 
 <% if (messages.success) { %>
-	<p style="color:green"><%- messages.success %></p>
+	<p style="color:green;padding-left: 35%"><%- messages.success %></p>
 <% } %>
 
-	<table width="25%" border="0">
+<!--
+	<table width="25%" border="0" >
 		<tr> 
 			<td>Name</td>
 			<td><input type="text" name="name" id="name" value="<%= name %>" /></td>
@@ -28,6 +29,40 @@ including header content which is common for all pages
 			</form>
 		</tr>
 	</table>
+-->
+
+
+
+<div class="page-data" id="datatable">
+
+	<div id="wrapper4" class="data-table-mini" style="padding-top:2%">
+		<label  style="font-size: 24px;padding-top:15%;padding-bottom:4%;"><b>User ID # <%=id%></b></label>
+		<div style="font-size: 24px;padding-top:2%;padding-bottom:1%;">
+			<label  ><b>Info</b></label></div>
+		<table cellpadding="11">
+			<tr>
+				<td class="label" valign="top">Name</td><td align="right"><%=name%></td>
+			</tr>
+			<tr>
+				<td class="label" valign="top">Device</td><td align="right"><%= device %></td>
+			</tr>
+
+			<tr>
+				<form method="post" action="/users/delete/<%= id %>" style="float:right">
+					<input type="submit" name="delete" value='Delete' onClick="return confirm('Are you sure you want to delete?')" />
+					<input class="a-inside edit" type="hidden" name="_method" value="DELETE" />
+				</form>
+			</tr>
+
+		</table>
+
+
+	</div>
+
+
+
+
+</div>
 
 
 
