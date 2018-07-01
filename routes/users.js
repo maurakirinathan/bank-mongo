@@ -1,160 +1,83 @@
-const client = require("./cassandrainfo")
-/*
- * GET blocks listing.
- */
-exports.list = function (req, res) {
+var express = require('express')
+var app = express()
+var ObjectId = require('mongodb').ObjectId
 
-    console.log('users: list');
-    client.execute('SELECT * FROM users LIMIT 10', [], function (err, result) {
-        if (err) {
-            console.log('users: list err:', err);
-            res.status(404).send({msg: err});
-        } else {
-            console.log('users: list succ:', result.rows);
-            res.render('users', {page_title: "All Users", data: result.rows})
-        }
-    });
-
-};
-
-
-/*
- * GET one block.
- */
-exports.list_one = function (req, res) {
-
-    var id = "\'" + req.params.id + "\'";
-    console.log('users: viewing one');
-
-    client.execute("SELECT * from users WHERE zaddress = " + id + " ALLOW FILTERING", [], function (err, result) {
-        if (err) {
-            console.log('users: viewing one err:', err);
-            res.status(404).send({msg: err});
-        } else {
-            console.log('users: viewing one succ:');
-            res.render('userViewOne', {page_title: "Users Details", data: result.rows});
-        }
-    });
-
-};
+// SHOW LIST OF USERS
+app.get('/', function(req, res, next) {	
+	// fetch and sort users collection by id in descending order
+	req.db.collection('keys').find().sort({"_id": -1}).toArray(function(err, result) {
+		//if (err) return console.log(err)
+		if (err) {
+			req.flash('error', err)
+			res.render('user/list', {
+				title: 'User List', 
+				data: ''
+			})
+		} else {
+			// render to views/user/list.ejs template file
+			res.render('user/list', {
+				title: 'User List', 
+				data: result
+			})
+		}
+	})
+})
 
 
-/*
- * GET one block.
- */
-exports.list_search = function (req, res) {
 
-    /* var id = req.params.id;*/
+
+
+// SHOW EDIT USER FORM
+app.post('/search', function(req, res, next){
+//	var o_id = new ObjectId(req.params.name)
+
+   // var name1 = req.params.name;
     var input = JSON.parse(JSON.stringify(req.body));
+      var nameSearch = input.name_search;
 
-    var zaddress = "\'" + input.id + "\'";
-    /*  var validate = require('uuid-validate');
-  */
+    console.log('name for search: ' + nameSearch);
 
-    console.log(input);
-    console.log('block: list_search');
+    req.db.collection('keys').find({"name": nameSearch}).toArray(function(err, result) {
+        console.log('result: ' + result);
 
-    client.execute("SELECT * from users WHERE zaddress = " + zaddress + " ALLOW FILTERING", [], function (err, result) {
-        if (err) {
-            console.log('users: search one err:', err);
-            res.status(404).send({msg: err});
-            res.render('users', {page_title: "User Details",});
-            //  allblocks();
-        } else {
-            console.log('users: search one succ:');
-            res.render('users', {page_title: "User Details", data: result.rows});
+        if(err) return console.log(err)
+
+        // if user not found
+        if (result==null || result=="") {
+            req.flash('error', 'User not found with id = ' +nameSearch)
+            res.redirect('/users')
         }
-    });
+        else { // if user found
+            // render to views/user/edit.ejs template file
+            console.log('else: ' + nameSearch);
+            res.render('user/edit', {
+                title: 'Edit User',
+                //data: rows[0],
+                name: result[0].name,
+                id: result[0]._id,
+                device: result[0].device
 
-};
-
-
-/*
- * GET cheques listing pagging next. run
- */
-exports.list_paging_next = function (req, res) {
-
-    console.log('users: list');
-    var id = "\'" + req.params.id + "\'";
-
-    console.log('id:  ' + id);
-    client.execute("SELECT * FROM users WHERE zaddress > " + id + " LIMIT 10 ALLOW FILTERING", [], function (err, result) {
-        if (err) {
-            ""
-            console.log('users: list err:', err);
-            res.status(404).send({msg: err});
-        } else {
-            console.log('users: list succ:', result.rows);
-
-            res.status(200).send(result.rows);
-
-            //res.render('allblocks_next', {page_title: "All Blocks", data: result.rows})
-
+            })
         }
-    });
-
-};
-
-
-/*
- *  Update user inactive ;
- */
-
-exports.user_inactive = function (req, res) {
-
-    var id = "\'" + req.params.id + "\'";
-    console.log('users: viewing one');
-
-    client.execute("UPDATE users SET active=false WHERE zaddress= " + id, [], function (err, result) {
-
-        if (err) {
-            console.log('users: update one err:', err);
-            res.status(404).send({msg: err});
-        } else {
-            console.log('users: update one succ:');
-            // res.render('userViewOne', {page_title: "Users Details", data: result.rows});
-            client.execute("SELECT * from users WHERE zaddress = " + id + " ALLOW FILTERING", [], function (err, result) {
-                if (err) {
-                    console.log('users: viewing one err:', err);
-                    res.status(404).send({msg: err});
-                } else {
-                    console.log('users: viewing one succ:');
-                    res.render('userViewOne', {page_title: "Users Details", data: result.rows});
-                }
-            });
-        }
-    });
-
-};
+    })
+})
 
 
-/*
- *  Update user inactive ;
- */
 
-exports.user_active = function (req, res) {
+// DELETE USER
+app.delete('/delete/(:id)', function(req, res, next) {	
+	var o_id = new ObjectId(req.params.id)
+	req.db.collection('keys').remove({"_id": o_id}, function(err, result) {
+		if (err) {
+			req.flash('error', err)
+			// redirect to users list page
+			res.redirect('/users')
+		} else {
+			req.flash('success', 'User deleted successfully! id = ' + req.params.id)
+			// redirect to users list page
+			res.redirect('/users')
+		}
+	})	
+})
 
-    var id = "\'" + req.params.id + "\'";
-    console.log('users: viewing one');
-
-    client.execute("UPDATE users SET active=true WHERE zaddress= " + id, [], function (err, result) {
-
-        if (err) {
-            console.log('users: update one err:', err);
-            res.status(404).send({msg: err});
-        } else {
-            console.log('users: update one succ:');
-            // res.render('userViewOne', {page_title: "Users Details", data: result.rows});
-            client.execute("SELECT * from users WHERE zaddress = " + id + " ALLOW FILTERING", [], function (err, result) {
-                if (err) {
-                    console.log('users: viewing one err:', err);
-                    res.status(404).send({msg: err});
-                } else {
-                    console.log('users: viewing one succ:');
-                    res.render('userViewOne', {page_title: "Users Details", data: result.rows});
-                }
-            });
-        }
-    });
-
-};
+module.exports = app

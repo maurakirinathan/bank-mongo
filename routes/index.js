@@ -1,19 +1,17 @@
+var express = require('express')
+var app = express()
 
-/*
- * GET home page.
- */
+app.get('/', function(req, res) {
+	// render to views/index.ejs template file
+	res.render('index', {title: 'My Node.js Application'})
+})
 
-exports.index = function(req, res){
-  res.render('index', { page_title: 'Hello Container World' });
-
-};
-
-
-/*
-var cassandra = require('cassandra-driver');
-
-var client = new cassandra.Client({contactPoints: ['localhost:9042'], keyspace: 'cchain'});
-client.connect(function (err, result) {
-    console.log('cchain: cassandra connected');
-});
-*/
+/** 
+ * We assign app object to module.exports
+ * 
+ * module.exports exposes the app object as a module
+ * 
+ * module.exports should be used to return the object 
+ * when this file is required in another module like app.js
+ */ 
+module.exports = app;
