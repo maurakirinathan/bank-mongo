@@ -33,7 +33,7 @@ app.post('/search', function(req, res, next){
 
    // var name1 = req.params.name;
     var input = JSON.parse(JSON.stringify(req.body));
-      var nameSearch = input.name_search;
+    var nameSearch = (input.name_search).trim();
 
     console.log('name for search: ' + nameSearch);
 
