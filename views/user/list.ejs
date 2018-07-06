@@ -3,18 +3,18 @@ including header content which is common for all pages
 -->
 <%- include ../layouts/header.ejs %>
 <% if (messages.error) { %>
-<p style="color:red;padding-left: 35%""><%- messages.error %></p>
+<p style="color:red;padding-left: 35%"><%- messages.error %></p>
 <% } %>
 <% if (messages.success) { %>
-<p style="color:green;padding-left: 35%""><%- messages.success %></p>
+<p style="color:green;padding-left: 35%"><%- messages.success %></p>
 <% } %>
 
 
 <div class="data-table">
     <table cellspacing="0" cellpadding="0">
-        <div style="padding-left:5%;padding-bottom: 3%;padding-top: 2%;width: 100%;">
+        <div style="padding-left:0%;padding-bottom: 3%;padding-top: 2%;width: 95%;">
             <form method="post" action="/users/search">
-                <input type="text" placeholder="Search by Name.." name="name_search" style="width: 71%; border-radius: 25px;">
+                <input type="text" placeholder="Search by Name.." name="name_search" style="width: 95%; border-radius: 25px;">
                 <button type="submit" class="a-inside edit" style=" border-radius: 25px;">Search</button>
             </form>
 
@@ -23,10 +23,9 @@ including header content which is common for all pages
 
 
         <tr style='text-align:left; background-color:#CCC'>
-            <th>Id</th>
-            <th>Name</th>
+            <th>Username</th>
             <th>Device</th>
-            <th>Action</th>
+            <th style="padding-left: 20%">Action</th>
         </tr>
 
         <!--
@@ -39,10 +38,9 @@ including header content which is common for all pages
         <% if (data) { %>
         <% data.forEach(function(user){ %>
         <tr>
-            <td><%= user._id %></td>
             <td><%= user.name %></td>
             <td><%= user.device %></td>
-            <td>
+            <td style="padding-left: 20%">
                 <div style="float:left">
                     <form method="post" action="/users/delete/<%= user._id %>" style="float:right">
                         <input type="submit" name="delete" value='Delete'

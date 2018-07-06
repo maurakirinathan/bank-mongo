@@ -55,7 +55,8 @@ app.post('/search', function(req, res, next){
                 //data: rows[0],
                 name: result[0].name,
                 id: result[0]._id,
-                device: result[0].device
+                device: result[0].device,
+                deviceid: result[0].deviceid
 
             })
         }
