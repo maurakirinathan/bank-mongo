@@ -1,8 +1,6 @@
-/*
-var host ='localhost';
+/*var host ='localhost';
 var port ='27017';
-var db ='senz';
-*/
+var db ='senz';*/
 
 var host = process.env.MONGO_HOST;
 var port = process.env.MONGO_PORT;
